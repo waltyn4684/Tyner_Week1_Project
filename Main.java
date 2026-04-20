@@ -1,16 +1,23 @@
 /*
 Name: Wallace Tyner
 Course: SDC330L
-Week: 1
+Week: 2
 Purpose:
-- Demonstrates inheritance (Contact -> types)
-- Demonstrates composition (ContactManager has contacts)
+- Demonstrates inheritance
+- Demonstrates composition
+- Demonstrates polymorphism
+- Demonstrates interface usage
 */
 
 import java.util.Scanner;
 
-// Base class (Inheritance)
-class Contact {
+// Interface (NEW - Week 2 requirement)
+interface Displayable {
+    void display();
+}
+
+// Base class
+class Contact implements Displayable {
     protected String firstName;
     protected String lastName;
     protected String phone;
@@ -23,6 +30,7 @@ class Contact {
         this.email = email;
     }
 
+    // Base display (can be overridden)
     public void display() {
         System.out.println("Name: " + firstName + " " + lastName);
         System.out.println("Phone: " + phone);
@@ -30,7 +38,7 @@ class Contact {
     }
 }
 
-// Derived class (Business)
+// Derived classes (Polymorphism happens here)
 class BusinessContact extends Contact {
     public BusinessContact(String f, String l, String p, String e) {
         super(f, l, p, e);
@@ -44,7 +52,6 @@ class BusinessContact extends Contact {
     }
 }
 
-// Derived class (Family)
 class FamilyContact extends Contact {
     public FamilyContact(String f, String l, String p, String e) {
         super(f, l, p, e);
@@ -58,7 +65,6 @@ class FamilyContact extends Contact {
     }
 }
 
-// Derived class (Friend)
 class FriendContact extends Contact {
     public FriendContact(String f, String l, String p, String e) {
         super(f, l, p, e);
@@ -72,44 +78,20 @@ class FriendContact extends Contact {
     }
 }
 
-// Composition class (manages contacts)
+// Composition class
 class ContactManager {
     private Contact[] contacts = new Contact[20];
     private int count = 0;
 
     public void addContact(Contact c) {
-        if (count < contacts.length) {
-            contacts[count] = c;
-            count++;
-            System.out.println("Contact added.\n");
-        } else {
-            System.out.println("Contact list is full.\n");
-        }
+        contacts[count++] = c;
+        System.out.println("Contact added.\n");
     }
 
+    // Polymorphism in action
     public void displayAll() {
-        if (count == 0) {
-            System.out.println("No contacts available.\n");
-            return;
-        }
-
         for (int i = 0; i < count; i++) {
-            contacts[i].display();
-        }
-    }
-
-    public void displayByLetter(char letter) {
-        boolean found = false;
-
-        for (int i = 0; i < count; i++) {
-            if (contacts[i].lastName.toLowerCase().charAt(0) == Character.toLowerCase(letter)) {
-                contacts[i].display();
-                found = true;
-            }
-        }
-
-        if (!found) {
-            System.out.println("No contacts found for that letter.\n");
+            contacts[i].display(); // calls different versions
         }
     }
 }
@@ -121,20 +103,19 @@ public class Main {
         Scanner sc = new Scanner(System.in);
         ContactManager manager = new ContactManager();
 
-        System.out.println("Week 1 Project – Contact Manager");
+        System.out.println("Week 2 Project – Contact Manager");
         System.out.println("Wallace Tyner\n");
 
         boolean run = true;
 
         while (run) {
             System.out.println("1. Add Contact");
-            System.out.println("2. View All Contacts");
-            System.out.println("3. View by Letter");
-            System.out.println("4. Exit");
+            System.out.println("2. View Contacts");
+            System.out.println("3. Exit");
             System.out.print("Choice: ");
 
             int choice = sc.nextInt();
-            sc.nextLine(); // clears buffer
+            sc.nextLine();
 
             if (choice == 1) {
 
@@ -154,27 +135,19 @@ public class Main {
                 int type = sc.nextInt();
                 sc.nextLine();
 
-                if (type == 1) {
+                if (type == 1)
                     manager.addContact(new BusinessContact(f, l, p, e));
-                } else if (type == 2) {
+                else if (type == 2)
                     manager.addContact(new FamilyContact(f, l, p, e));
-                } else {
+                else
                     manager.addContact(new FriendContact(f, l, p, e));
-                }
 
             } else if (choice == 2) {
                 manager.displayAll();
 
             } else if (choice == 3) {
-                System.out.print("Enter starting letter: ");
-                char letter = sc.nextLine().charAt(0);
-                manager.displayByLetter(letter);
-
-            } else if (choice == 4) {
                 run = false;
-                System.out.println("Exiting program...");
-            } else {
-                System.out.println("Invalid option.\n");
+                System.out.println("Exiting...");
             }
         }
 
