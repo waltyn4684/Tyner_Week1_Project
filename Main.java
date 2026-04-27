@@ -1,121 +1,37 @@
 /*
 Name: Wallace Tyner
 Course: SDC330L
-Week: 2
+Week: 3
+File: Main.java
 Purpose:
-- Demonstrates inheritance
-- Demonstrates composition
-- Demonstrates polymorphism
-- Demonstrates interface usage
+- Main driver for Contact Manager
+- Demonstrates abstraction, constructors, and access specifiers
 */
 
+import java.util.ArrayList;
 import java.util.Scanner;
 
-// Interface (NEW - Week 2 requirement)
-interface Displayable {
-    void display();
-}
-
-// Base class
-class Contact implements Displayable {
-    protected String firstName;
-    protected String lastName;
-    protected String phone;
-    protected String email;
-
-    public Contact(String firstName, String lastName, String phone, String email) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.phone = phone;
-        this.email = email;
-    }
-
-    // Base display (can be overridden)
-    public void display() {
-        System.out.println("Name: " + firstName + " " + lastName);
-        System.out.println("Phone: " + phone);
-        System.out.println("Email: " + email);
-    }
-}
-
-// Derived classes (Polymorphism happens here)
-class BusinessContact extends Contact {
-    public BusinessContact(String f, String l, String p, String e) {
-        super(f, l, p, e);
-    }
-
-    @Override
-    public void display() {
-        System.out.println("Type: Business");
-        super.display();
-        System.out.println("----------------------");
-    }
-}
-
-class FamilyContact extends Contact {
-    public FamilyContact(String f, String l, String p, String e) {
-        super(f, l, p, e);
-    }
-
-    @Override
-    public void display() {
-        System.out.println("Type: Family");
-        super.display();
-        System.out.println("----------------------");
-    }
-}
-
-class FriendContact extends Contact {
-    public FriendContact(String f, String l, String p, String e) {
-        super(f, l, p, e);
-    }
-
-    @Override
-    public void display() {
-        System.out.println("Type: Friend");
-        super.display();
-        System.out.println("----------------------");
-    }
-}
-
-// Composition class
-class ContactManager {
-    private Contact[] contacts = new Contact[20];
-    private int count = 0;
-
-    public void addContact(Contact c) {
-        contacts[count++] = c;
-        System.out.println("Contact added.\n");
-    }
-
-    // Polymorphism in action
-    public void displayAll() {
-        for (int i = 0; i < count; i++) {
-            contacts[i].display(); // calls different versions
-        }
-    }
-}
-
-// Main class
 public class Main {
+
     public static void main(String[] args) {
 
         Scanner sc = new Scanner(System.in);
-        ContactManager manager = new ContactManager();
+        ArrayList<Contact> contacts = new ArrayList<>();
 
-        System.out.println("Week 2 Project – Contact Manager");
-        System.out.println("Wallace Tyner\n");
+        int choice = 0;
 
-        boolean run = true;
+        System.out.println("Week 3 Project - Contact Manager");
+        System.out.println("Wallace Tyner");
 
-        while (run) {
-            System.out.println("1. Add Contact");
+        while (choice != 3) {
+
+            System.out.println("\n1. Add Contact");
             System.out.println("2. View Contacts");
             System.out.println("3. Exit");
             System.out.print("Choice: ");
 
-            int choice = sc.nextInt();
-            sc.nextLine();
+            choice = sc.nextInt();
+            sc.nextLine(); // clear buffer
 
             if (choice == 1) {
 
@@ -131,23 +47,29 @@ public class Main {
                 System.out.print("Email: ");
                 String e = sc.nextLine();
 
-                System.out.println("Type (1=Business, 2=Family, 3=Friend): ");
-                int type = sc.nextInt();
-                sc.nextLine();
+                System.out.print("Type (Business, Family, Friend): ");
+                String type = sc.nextLine();
 
-                if (type == 1)
-                    manager.addContact(new BusinessContact(f, l, p, e));
-                else if (type == 2)
-                    manager.addContact(new FamilyContact(f, l, p, e));
-                else
-                    manager.addContact(new FriendContact(f, l, p, e));
+                // Using constructor
+                Contact c = new Contact(f, l, p, e, type);
+                contacts.add(c);
+
+                System.out.println("Contact added.");
 
             } else if (choice == 2) {
-                manager.displayAll();
+
+                if (contacts.isEmpty()) {
+                    System.out.println("No contacts available.");
+                } else {
+                    for (Contact c : contacts) {
+                        c.display(); // polymorphism in action
+                    }
+                }
 
             } else if (choice == 3) {
-                run = false;
                 System.out.println("Exiting...");
+            } else {
+                System.out.println("Invalid choice.");
             }
         }
 
