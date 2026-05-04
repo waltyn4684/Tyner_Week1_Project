@@ -1,78 +1,91 @@
 /*
 Name: Wallace Tyner
 Course: SDC330L
-Week: 3
+Week: 4
 File: Main.java
 Purpose:
-- Main driver for Contact Manager
-- Demonstrates abstraction, constructors, and access specifiers
+- Runs Contact Manager with database integration
 */
 
-import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Main {
 
     public static void main(String[] args) {
 
-        Scanner sc = new Scanner(System.in);
-        ArrayList<Contact> contacts = new ArrayList<>();
+        Scanner scanner = new Scanner(System.in);
+        boolean running = true;
 
-        int choice = 0;
+        // Initialize database
+        SQLiteDatabase.initializeDatabase();
 
-        System.out.println("Week 3 Project - Contact Manager");
-        System.out.println("Wallace Tyner");
+        System.out.println("Week 4 Project - Contact Manager");
 
-        while (choice != 3) {
+        while (running) {
 
             System.out.println("\n1. Add Contact");
             System.out.println("2. View Contacts");
-            System.out.println("3. Exit");
+            System.out.println("3. Update Contact");
+            System.out.println("4. Delete Contact");
+            System.out.println("5. Exit");
             System.out.print("Choice: ");
 
-            choice = sc.nextInt();
-            sc.nextLine(); // clear buffer
+            int choice = scanner.nextInt();
+            scanner.nextLine(); // clear buffer
 
-            if (choice == 1) {
+            switch (choice) {
 
-                System.out.print("First Name: ");
-                String f = sc.nextLine();
+                case 1:
+                    System.out.print("First Name: ");
+                    String fn = scanner.nextLine();
 
-                System.out.print("Last Name: ");
-                String l = sc.nextLine();
+                    System.out.print("Last Name: ");
+                    String ln = scanner.nextLine();
 
-                System.out.print("Phone: ");
-                String p = sc.nextLine();
+                    System.out.print("Phone: ");
+                    String phone = scanner.nextLine();
 
-                System.out.print("Email: ");
-                String e = sc.nextLine();
+                    System.out.print("Email: ");
+                    String email = scanner.nextLine();
 
-                System.out.print("Type (Business, Family, Friend): ");
-                String type = sc.nextLine();
+                    System.out.print("Type (Business/Family/Friend): ");
+                    String type = scanner.nextLine();
 
-                // Using constructor
-                Contact c = new Contact(f, l, p, e, type);
-                contacts.add(c);
+                    Contact contact = new Contact(fn, ln, phone, email, type);
+                    SQLiteDatabase.addContact(contact);
+                    break;
 
-                System.out.println("Contact added.");
+                case 2:
+                    SQLiteDatabase.viewContacts();
+                    break;
 
-            } else if (choice == 2) {
+                case 3:
+                    System.out.print("Enter first name to update: ");
+                    String updateName = scanner.nextLine();
 
-                if (contacts.isEmpty()) {
-                    System.out.println("No contacts available.");
-                } else {
-                    for (Contact c : contacts) {
-                        c.display(); // polymorphism in action
-                    }
-                }
+                    System.out.print("Enter new phone: ");
+                    String newPhone = scanner.nextLine();
 
-            } else if (choice == 3) {
-                System.out.println("Exiting...");
-            } else {
-                System.out.println("Invalid choice.");
+                    SQLiteDatabase.updateContact(updateName, newPhone);
+                    break;
+
+                case 4:
+                    System.out.print("Enter first name to delete: ");
+                    String deleteName = scanner.nextLine();
+
+                    SQLiteDatabase.deleteContact(deleteName);
+                    break;
+
+                case 5:
+                    System.out.println("Exiting program...");
+                    running = false;
+                    break;
+
+                default:
+                    System.out.println("Invalid choice.");
             }
         }
 
-        sc.close();
+        scanner.close();
     }
 }
